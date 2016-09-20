@@ -94,11 +94,11 @@ void generate_julia(int** matrix_PGM,int ancho,int alto,double w, double H,numco
 	//if (ancho == 1) deltaX = 1;
 	//if (alto == 1) deltaY = 0;
 	for (int im=0; im<alto;im++){
-		 aux_im=(((im)*deltaY) - ymax) - center.imag;
+		 aux_im=(ymax - ((im)*deltaY)) - center.imag;
 		 numcomplex zeta;
 		for(int re=0;re<ancho;re++){
 			zeta.real=(xmin + (re)*deltaX) - center.real;
-			zeta.imag=aux_im - center.imag;
+			zeta.imag=aux_im;
 
 			while(abs_cplx(zeta) < 2 && n<255){
 				
