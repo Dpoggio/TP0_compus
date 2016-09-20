@@ -3,11 +3,37 @@
 #include <string.h>
 #include <math.h>
 #define ARG_ERR -1
+#define FILE_ERROR -2
+#define ERR_GRAL 1
+#define ERR_MEM -3
 typedef struct{
 	double real;
 	float imag;
 }numcomplex;
 
+void armar_headerPGM(FILE* salida,int alto, int ancho){
+	fputs("P2 \n",salida);
+	fputs("#TP0 Vecindades de Julia \n",salida);
+	char alto_str[10];
+	char ancho_str[10];
+	char concat[20];
+	sprintf(alto_str,"%d \n",alto);
+	sprintf(ancho_str,"%d",ancho);
+	strcpy(concat,ancho_str);
+	strcat(concat," ");
+	strcat(concat,alto_str);
+	fputs(concat,salida);
+	fputs("255 \n",salida);
+}
+
+void armar_imagenPGM(FILE* salida, int** matrix_PGM,int alto, int ancho){
+	for(int im = 0; im<alto;im++){
+		for(int re=0;re<ancho;re++){
+			fprintf(salida,"%d ",matrix_PGM[im][re]);
+		}
+	}
+	fprintf(salida,"\n");
+}
 void imprimir_complejo(numcomplex c){
 	printf("%f %+fi \n",c.real,c.imag);
 }
@@ -28,16 +54,70 @@ void imprimir_error(int status){
 			printf("Debe ingresar correctamente los argumentos. Abortando ejecucion\n");
 			exit(ARG_ERR);
 			break;
+		case FILE_ERROR:
+			printf("La ruta de arhivo ingresada no es valida. Abortando ejecucion\n");
+			exit(FILE_ERROR);
+		case ERR_MEM:
+			printf("No se ha podido reservar la memoria necesaria. Abortando ejecucion\n");
+			exit(ERR_MEM);
 		default:
 			printf("Error no contemplado. Abortando Ejecucion \n");
 	}		exit(status);
 }
 
+int** create_matrix(int alto, int ancho, int status){
+	int** matrix_PGM= malloc(alto * sizeof(*matrix_PGM));
+
+	if (matrix_PGM == NULL){
+		status = ERR_MEM;
+		imprimir_error(status);
+	}
+	for(int i = 0; i < alto; i++){
+		matrix_PGM[i] = malloc(ancho* sizeof(*matrix_PGM[i]));
+		if (matrix_PGM[i] == NULL){
+			status = ERR_MEM;
+			imprimir_error(status);
+		}
+	}
+	return matrix_PGM;
+}
+
+void generate_julia(int** matrix_PGM,int ancho,int alto,double w, double H,numcomplex constant, numcomplex center){
+	double aux_im;
+	int n = 0;
+	double xmin=-w/2;
+	double xmax=w/2;
+	double ymin=-H/2;
+	double ymax= H/2;
+	double deltaX=(xmax-xmin)/(ancho-1);
+	double deltaY=(ymax-ymin)/(alto-1);
+	//if (ancho == 1) deltaX = 1;
+	//if (alto == 1) deltaY = 0;
+	for (int im=0; im<alto;im++){
+		 aux_im=(ymax - ((im)*deltaY)) - center.imag;
+		 numcomplex zeta;
+		for(int re=0;re<ancho;re++){
+			zeta.real=(xmin + (re)*deltaX) - center.real;
+			zeta.imag=aux_im - center.imag;
+
+			while(abs_cplx(zeta) < 2 && n<255){
+				
+				sqr_cplx(&zeta);
+				zeta.real+=constant.real;
+				zeta.imag+=constant.imag;
+				n++;
+			}
+			matrix_PGM[im][re]= n;
+			n=0;
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	int status = 0;
-	int alto = 640;
-	int ancho = 480;
+	int alto = 480;
+	int ancho = 640;
 	numcomplex constant;
 	numcomplex center;
 	center.real=0;
@@ -127,8 +207,16 @@ int main(int argc, char *argv[])
 						};
 						
 						salida = fopen(argv[i+1], "w");
+						if(salida == NULL){
+							status=FILE_ERROR;
+							break;
+						}
 						break;
 					case 'w':
+						if (argv[i+1] == NULL){
+							status=ARG_ERR;
+							break;
+						}
 						w=atof(argv[i+1]);
 						break;
 					default: printf("Argumento desconocido: prueba con -h para ver la ayuda.\n");
@@ -136,7 +224,7 @@ int main(int argc, char *argv[])
 			}
 			else{
 				printf("Error! Formato desconocido. Prueba con -h para ver la ayuda. \n");
-				return 1;
+				return ERR_GRAL;
 				//return error de argumento
 			}
 		}
@@ -145,39 +233,12 @@ int main(int argc, char *argv[])
 		printf("Se correrá el programa con los valores por DEFAULT. \n");
 	}
 	if (status != 0) imprimir_error(status);
-	fputs("P2 \n",salida);
-	fputs("#TP0 Vecindades de Julia \n",salida);
-	char alto_str[10];
-	char ancho_str[10];
-	char concat[20];
-	sprintf(alto_str,"%d \n",alto);
-	sprintf(ancho_str,"%d",ancho);
-	strcpy(concat,ancho_str);
-	strcat(concat," ");
-	strcat(concat,alto_str);
-	fputs(concat,salida);
-	fputs("255 \n",salida);
-	int matrix_PGM[alto][ancho];
-	double aux_im;
-	int n;
-	for (int im=0; im<alto;im++){
-		 aux_im= (H - (im*2*H/alto));
-		 numcomplex zeta;
-		for(int re=0;re<ancho;re++){
-			zeta.real=(-w + (re*2*w/ancho)) - center.real;
-			zeta.imag=aux_im - center.imag;
-			while(abs_cplx(zeta) < 2 && n<255){
-				sqr_cplx(&zeta);
-				zeta.real+=constant.real;
-				zeta.imag+=constant.imag;
-				n++;
-			}
-			matrix_PGM[im][re]= n;
-			fprintf(salida,"%d ",matrix_PGM[im][re]);
-			n=0;
-		}
-		fprintf(salida,"\n");
-	}	
-
+	armar_headerPGM(salida,alto,ancho);
+	
+	int** matrix_PGM;
+	matrix_PGM = create_matrix(alto,ancho,status);
+	
+	generate_julia(matrix_PGM,ancho,alto,w,H,constant,center);
+	armar_imagenPGM(salida,matrix_PGM,alto,ancho);
 	return 0;
 }
