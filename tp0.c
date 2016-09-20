@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
+#define ARG_ERR -1
 typedef struct{
 	double real;
 	float imag;
@@ -16,12 +16,26 @@ double abs_cplx(numcomplex a){
 	return sqrt(pow(a.real,2) + pow(a.imag,2));
 }
 
-void sqr_cplx(numcomplex a){
+void sqr_cplx(numcomplex* a){
+	double aux = a->imag;
+	a->imag  = 2 * a->real * a->imag;
+	a->real=pow(a->real,2) - pow(aux,2);
+}
 
+void imprimir_error(int status){
+	switch(status){
+		case ARG_ERR: 
+			printf("Debe ingresar correctamente los argumentos. Abortando ejecucion\n");
+			exit(ARG_ERR);
+			break;
+		default:
+			printf("Error no contemplado. Abortando Ejecucion \n");
+	}		exit(status);
 }
 
 int main(int argc, char *argv[])
 {
+	int status = 0;
 	int alto = 640;
 	int ancho = 480;
 	numcomplex constant;
@@ -57,54 +71,65 @@ int main(int argc, char *argv[])
 						break;
 					case 'r':
 						auxc=strtok(argv[i+1],"xX");
-						if (auxc == NULL) break;
+						if (auxc == NULL){
+							status = ARG_ERR;
+							break;
+						}
 						ancho=atoi(auxc);
 						auxc=strtok(NULL, " ");
-						if (auxc == NULL) break;
+						if (auxc == NULL) {
+							status = ARG_ERR;
+							break;
+						}
 						alto=atoi(auxc);
-						printf("Ancho %d",ancho);
-						printf("Alto %d \n",alto);
 						break;
 					case 'C':
 						auxc=argv[i+1];
+						if(auxc == NULL){
+							status=ARG_ERR;
+							break;
+						}
 						constant.real=atof(auxc);
 						if(argv[i+1][0]=='-' || argv[i+1][0]=='+'){				//si el primer numero tiene signo, lo saltea
 							auxc=strpbrk(auxc+1,"-+");
 						}
 						else auxc=strpbrk(auxc,"-+");
 						constant.imag=atof(auxc);
-						printf("constant C:");
-						imprimir_complejo(constant);
 						break;
 					case 'c':
 						
 						auxc=argv[i+1];
+						if (auxc == NULL){
+							status=ARG_ERR;
+							break;
+						}
 						center.real=atof(auxc);									//toma la parte real
 						if(argv[i+1][0]=='-' || argv[i+1][0]=='+'){				//si el primer numero tiene signo, lo saltea
 							auxc=strpbrk(auxc+1,"-+");
 						}
 						else auxc=strpbrk(auxc,"-+");
 						center.imag=atof(auxc);									//toma la parte imaginaria
-					
-						printf("numero c: ");
-						imprimir_complejo(center);
 						break;
 					case 'H':
+						if (argv[i+1] == NULL){
+							status=ARG_ERR;
+							break;
+						}
 						H=atof(argv[i+1]);
-						printf("numero H: %f \n",H);
 						break;
 					case 'o':
-						printf("ENTRA ACA \n");
+						if(argv[i+1] == NULL){
+							status=ARG_ERR;
+							break;
+						}
 						if(strcmp(argv[i+1],"-") == 0){
-							printf("ME DIO TRUE \n");
 							break;
 						};
-						printf("%s \n",argv[i+1]);
+						
 						salida = fopen(argv[i+1], "w");
 						break;
 					case 'w':
 						w=atof(argv[i+1]);
-						printf("numero w: %f \n",w);
 						break;
 					default: printf("Argumento desconocido: prueba con -h para ver la ayuda.\n");
 				}
@@ -119,6 +144,7 @@ int main(int argc, char *argv[])
 	else{
 		printf("Se correrá el programa con los valores por DEFAULT. \n");
 	}
+	if (status != 0) imprimir_error(status);
 	fputs("P2 \n",salida);
 	fputs("#TP0 Vecindades de Julia \n",salida);
 	char alto_str[10];
@@ -133,26 +159,17 @@ int main(int argc, char *argv[])
 	fputs("255 \n",salida);
 	int matrix_PGM[alto][ancho];
 	double aux_im;
+	int n;
 	for (int im=0; im<alto;im++){
 		 aux_im= (H - (im*2*H/alto));
 		 numcomplex zeta;
-		 printf("%f \n",aux_im);
 		for(int re=0;re<ancho;re++){
-			int n = 0;
-			int aux;
 			zeta.real=(-w + (re*2*w/ancho)) - center.real;
 			zeta.imag=aux_im - center.imag;
-			//imprimir_complejo(zeta);
 			while(abs_cplx(zeta) < 2 && n<255){
-				aux = zeta.real;
-				zeta.real=pow(aux,2)-pow(zeta.imag,2);
-				zeta.imag=2*aux*zeta.imag;
+				sqr_cplx(&zeta);
 				zeta.real+=constant.real;
-				
 				zeta.imag+=constant.imag;
-				//printf("EL CUADRADO ES \n");
-				//imprimir_complejo(zeta);
-				//printf("%f \n",abs_cplx(zeta));
 				n++;
 			}
 			matrix_PGM[im][re]= n;
@@ -162,10 +179,5 @@ int main(int argc, char *argv[])
 		fprintf(salida,"\n");
 	}	
 
-	for (int i = 0; i < alto; i++){
-		for(int j = 0; j < ancho; j++){
-			printf("%d ",matrix_PGM[i][j]);
-		}
-		printf("\n");
-	}
+	return 0;
 }
