@@ -169,12 +169,17 @@ int main(int argc, char *argv[])
 							break;
 						}
 						ancho=atoi(auxc);
+
 						auxc=strtok(NULL, " ");
 						if (auxc == NULL) {
 							status = ARG_ERR;
 							break;
 						}
 						alto=atoi(auxc);
+						if(ancho==0 || alto==0){
+							status = ARG_ERR;
+							break;
+						}
 						break;
 					case 'C':
 						auxc=argv[i+1];
