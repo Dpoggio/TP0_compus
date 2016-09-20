@@ -89,16 +89,28 @@ void generate_julia(int** matrix_PGM,int ancho,int alto,double w, double H,numco
 	double xmax=w/2;
 	double ymin=-H/2;
 	double ymax= H/2;
-	double deltaX=(xmax-xmin)/(ancho-1);
-	double deltaY=(ymax-ymin)/(alto-1);
+	double deltaX,deltaY;
+	if(ancho!=1){
+		deltaX=(xmax-xmin)/(ancho-1);
+	}
+	else{
+		deltaX=(xmax-xmin);
+	}
+	if(alto!=1){
+		deltaY=(ymax-ymin)/(alto-1);
+	}
+	else{
+		deltaY=(ymax-ymin);
+	}
+	
 	//if (ancho == 1) deltaX = 1;
 	//if (alto == 1) deltaY = 0;
 	for (int im=0; im<alto;im++){
-		 aux_im=(((im)*deltaY) - ymax) - center.imag;
+		 aux_im=((ymax - deltaY/2 - (im)*deltaY)) + center.imag;
 		 numcomplex zeta;
 		for(int re=0;re<ancho;re++){
-			zeta.real=(xmin + (re)*deltaX) - center.real;
-			zeta.imag=aux_im - center.imag;
+			zeta.real=(xmin + deltaX/2 + (re)*deltaX) + center.real;
+			zeta.imag=aux_im;
 
 			while(abs_cplx(zeta) < 2 && n<255){
 				
@@ -141,9 +153,8 @@ int main(int argc, char *argv[])
 						"    -c\t    Setea el centro de la imagen.\n"
 						"    -H\t    Setea el alto del rectangulo. Valor por defecto=4\n"
 						"    -w\t    Setea el ancho del rectangulo. Valor por defecto=4\n"
-						"    -o\t    Setea el archivo de salida \n"
+						"    -o\t    Setea el archivo de salida"
 						"    -C\t    Setea la constante del algoritmo. Valor por defecto= 0.285+0.01i\n"
-						"    -C\t    Setea la resolucion del archivo PGM. Valor por defecto= 640x480 \n"
 						"Examples:\n  tp0 -c +0.282-0.01i -w 0.005 -H 0.005 -o dos.pgm\n");
 					//texto con ayuda a completar//
 						return 0;
