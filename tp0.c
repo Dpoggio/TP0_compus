@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	else{
-		printf("Se correrá el programa con los valores por DEFAULT. \n");
+		printf("Se correra el programa con los valores por DEFAULT. \n");
 	}
 	if (status != 0) imprimir_error(status);
 	fputs("P2 \n",salida);
