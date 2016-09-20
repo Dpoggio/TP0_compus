@@ -141,8 +141,9 @@ int main(int argc, char *argv[])
 						"    -c\t    Setea el centro de la imagen.\n"
 						"    -H\t    Setea el alto del rectangulo. Valor por defecto=4\n"
 						"    -w\t    Setea el ancho del rectangulo. Valor por defecto=4\n"
-						"    -o\t    Setea el archivo de salida"
+						"    -o\t    Setea el archivo de salida \n"
 						"    -C\t    Setea la constante del algoritmo. Valor por defecto= 0.285+0.01i\n"
+						"    -C\t    Setea la resolucion del archivo PGM. Valor por defecto= 640x480 \n"
 						"Examples:\n  tp0 -c +0.282-0.01i -w 0.005 -H 0.005 -o dos.pgm\n");
 					//texto con ayuda a completar//
 						return 0;
