@@ -166,7 +166,7 @@ calculos necesarios genera el documento pgm en donde guarda la imagen.
 Para compilar el programa basta con ejecutar 
 
 \bigskip	
-\texttt{gcc -g -lm tp0.c -o <nombre salida>}
+\texttt{gcc -std=c99 -O0 -g tp0.c -o <nombre salida> -lm}
 
 
 \subsection{Modo de Operación}
@@ -193,7 +193,7 @@ Para ejecutarlo se debe hacer:
 o
 
 \bigskip
-\texttt{./tp0 -c +0.282-0.01i -w 0.005 -H 0.005 -o dos.pgm}
+\texttt{./tp0 -C -1.125-0.21650635094611i -o dos.pgm}
 
 	
 \subsection{Ejecución de prueba}

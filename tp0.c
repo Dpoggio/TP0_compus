@@ -94,7 +94,7 @@ void generate_julia(int** matrix_PGM,int ancho,int alto,double w, double H,numco
 	//if (ancho == 1) deltaX = 1;
 	//if (alto == 1) deltaY = 0;
 	for (int im=0; im<alto;im++){
-		 aux_im=(ymax - ((im)*deltaY)) - center.imag;
+		 aux_im=(((im)*deltaY) - ymax) - center.imag;
 		 numcomplex zeta;
 		for(int re=0;re<ancho;re++){
 			zeta.real=(xmin + (re)*deltaX) - center.real;
@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
 	constant.real=0.285;
 	constant.imag=-0.01;
 	char *auxc;
+	char *auxc2;
 	double H=4,w=4;
 	FILE *salida = stdout;
 
@@ -174,6 +175,11 @@ int main(int argc, char *argv[])
 							auxc=strpbrk(auxc+1,"-+");
 						}
 						else auxc=strpbrk(auxc,"-+");
+						auxc2 = strpbrk(auxc, "i");
+						if (!auxc2){
+							status = ARG_ERR;
+							break;
+						}
 						constant.imag=atof(auxc);
 						break;
 					case 'c':
@@ -187,7 +193,14 @@ int main(int argc, char *argv[])
 						if(argv[i+1][0]=='-' || argv[i+1][0]=='+'){				//si el primer numero tiene signo, lo saltea
 							auxc=strpbrk(auxc+1,"-+");
 						}
-						else auxc=strpbrk(auxc,"-+");
+						else{
+							auxc=strpbrk(auxc,"-+");
+						}
+						auxc2 = strpbrk(auxc, "i");
+						if (!auxc2){
+							status = ARG_ERR;
+							break;
+						}
 						center.imag=atof(auxc);									//toma la parte imaginaria
 						break;
 					case 'H':
