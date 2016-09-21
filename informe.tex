@@ -139,7 +139,7 @@
 		\end{itemize}
 		Para generar el archivo ``main.s'' con el código assembly se debe ejecutar el siguiente comando: 
 		  \begin{verbatim}
-			      gcc -std=c99 -S -mrnames -O0 -g tp0.c -o tp0 -lm
+			      gcc -std=c99 -S -mrnames -O0 -g tp0.c
 		  \end{verbatim}
 		Para compilar el código se debe ejecutar el siguiente comando:
 		\begin{verbatim}
@@ -166,7 +166,7 @@ calculos necesarios genera el documento pgm en donde guarda la imagen.
 Para compilar el programa basta con ejecutar 
 
 \bigskip	
-\texttt{gcc -std=c99 -O0 -g tp0.c -o <nombre salida> -lm}
+\begin{verbatim} gcc -std=c99 -O0 -g tp0.c -o <nombre salida> -lm \end{verbatim}
 
 
 \subsection{Modo de Operación}
@@ -200,7 +200,7 @@ o
      Primero, usamos la opcion -h para ver el mensaje de ayuda:
      \begin{verbatim}
 Usage:
-  tp0 -h  -V -c <a+bi> -C <a+bi> -H <float> -w <float> -o <out_file> -
+  tp0 -h  -V -c <a+bi> -C <a+bi> -H <float> -w <float> -o <out_file>
 Options:
     -V	    Imprime la version y finaliza.
     -h	    Imprime esta informacion y finaliza.
@@ -216,49 +216,55 @@ Examples:
 Luego, hacemos una corrida de prueba con la linea:
 
 \bigskip
+\bigskip
 \texttt{\$  ./tp0 -o uno.pgm}
 
 \bigskip
 Y el resultado de la ejecución fue:
 
 \bigskip
-%imagen aca
+\includegraphics[width=0.8\textwidth,natwidth=610,natheight=642]{uno.png}
 
 \bigskip
-Los resultados coinciden con los esperados.
+Los resultados coinciden con los esperados, igual al ejemplo del enunciado.
+
+\bigskip 
+\bigskip 
+Probamos con otro caso:
+
+\bigskip
+\texttt{\$  ./tp0 -C -1.125-0.21650635094611i -o dos.pgm}
+
+\bigskip
+Y el resultado de la ejecución fue:
+
+\bigskip
+\includegraphics[width=0.8\textwidth,natwidth=610,natheight=642]{dos.png}
+
+\bigskip
+Los resultados coinciden con los esperados, aunque invertidos respecto del ejemplo del enunciado.
 
 \section{Corridas de prueba}
 
-%\subsection{Archivos de prueba}
-%\subsubsection{example.txt}
-%Este archivo concuerda con la especificación correcta de entrada.
-%\verbatiminput{example.txt}
-%\subsubsection{example1.txt}
-%Este archivo concuerda con la especificación correcta de entrada. Tiene un espacio adicional entre dos elementos de las matrices de la primera línea.
-%\verbatiminput{example1.txt}
-%\subsubsection{muchosEspacios.txt}
-%Este archivo concuerda con la especificación correcta de entrada. Tiene varios espacios adicionales.
-%\verbatiminput{muchosEspacios.txt}
-%\subsubsection{incorrecto1.txt}
-%Este archivo tiene una entrada adicional en la primer y segunda línea.
-%\verbatiminput{incorrecto1.txt}
-%\subsubsection{incorrecto2.txt}
-%Este archivo tiene un caracter de nueva línea luego de la entrada del tamaño de las matrices.
-%\verbatiminput{incorrecto2.txt}
-%\subsubsection{incorrecto3.txt}
-%En este archivo faltan entradas en la segunda línea.
-%\verbatiminput{incorrecto3.txt}
-%\subsubsection{incorrecto4.txt}
-%Este archivo tiene una entrada incorrecta en la segunda línea.
-%\verbatiminput{incorrecto4.txt}
-%\subsubsection{incorrecto5.txt}
-%Este archivo tiene una entrada incorrecta en la segunda línea.
-%\verbatiminput{incorrecto5.txt}
-
 \subsection{Pruebas}
-\subsubsection{example.txt}
+
+\subsubsection{Imagen 1x1}
 \begin{verbatim}
-%parametros invalidos y esas cosas
+./tp0 -c 0.01+0i -r 1x1 -o -
+P2 
+1 1 
+255 
+19 
+\end{verbatim}
+La salida es la esperada.
+
+\subsubsection{Imagen 1x1 con punto que no pertenece al conjunto}
+\begin{verbatim}
+./tp0 -c 10+0i -r 1x1 -o -
+P2 
+1 1 
+255 
+0
 \end{verbatim}
 La salida es la esperada.
 
@@ -268,16 +274,9 @@ La salida es la esperada.
 
 \bigskip
 
-%\lstinputlisting{matrix.c}
-
-\bigskip
-
-%\lstinputlisting{main.c}
-
 \section{Código MIPS}
 
-aca va el codigo mips generado.
-%\lstinputlisting{matrix.s}
+\lstinputlisting{tp0.s}
 
 \bigskip
 
@@ -287,10 +286,10 @@ aca va el codigo mips generado.
      En el presente trabajo se aprendió a utilizar las herramientas que utilizaremos en los próximos trabajos prácticos. 
      Se aprendió a utilizar el emulador GXEmul y compilar programas para arquitectura MIPS, tanto a forma binaria como assembly MIPS.
 
-%\section{Enunciado}
+\section{Enunciado}
 
-%Adjundto a partir de la siguiente hoja.
+Adjundto a partir de la siguiente hoja.
 
-%\includepdf[pages={-}]{tp0-2016-1q.pdf}
+\includepdf[pages={-}]{enunciadoTp0.pdf}
 
 \end{document}

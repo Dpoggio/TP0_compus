@@ -125,6 +125,13 @@ void generate_julia(int** matrix_PGM,int ancho,int alto,double w, double H,numco
 	}
 }
 
+void free_matrix(int** matrix_PGM, int alto, int ancho){
+	for (int i = 0; i < alto; i++){
+		free(matrix_PGM[i]);
+	}
+	free(matrix_PGM);
+}
+
 int main(int argc, char *argv[])
 {
 	int status = 0;
@@ -270,5 +277,8 @@ int main(int argc, char *argv[])
 	
 	generate_julia(matrix_PGM,ancho,alto,w,H,constant,center);
 	armar_imagenPGM(salida,matrix_PGM,alto,ancho);
+	
+	free_matrix(matrix_PGM, alto, ancho);
+	fclose(salida);
 	return 0;
 }
