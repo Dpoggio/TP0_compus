@@ -1,0 +1,29 @@
+Registros t
+
+t0 -> parms*
+t1 -> y
+t2 -> x
+t3 -> c
+t4 -> parms->shades
+t5 -> parms->x_res
+t6 -> parms->y_res
+t7 -> parms->fd
+
+Registros f
+
+f4  -> ci
+f5  -> cr
+f6  -> zr
+f7  -> zi
+f8  -> sr
+f9  -> si
+f10 -> cpr (parms->cp_re)
+f11 -> cpi (parms->cp_im)
+f12 -> parms->UL_re
+f13 -> parms->UL_im
+f14 -> parms->d_re
+f15 -> parms->d_im
+f18 -> aux
+f19 -> aux/absz
+
+
