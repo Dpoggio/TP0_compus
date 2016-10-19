@@ -9,21 +9,28 @@ t5 -> parms->x_res
 t6 -> parms->y_res
 t7 -> parms->fd
 
-Registros f
-
 f4  -> ci
-f5  -> cr
 f6  -> zr
-f7  -> zi
 f8  -> sr
-f9  -> si
 f10 -> cpr (parms->cp_re)
-f11 -> cpi (parms->cp_im)
 f12 -> parms->UL_re
-f13 -> parms->UL_im
 f14 -> parms->d_re
-f15 -> parms->d_im
-f18 -> aux
-f19 -> aux/absz
+f16 -> aux
+f18 -> aux/absz
 
+Registros que se deben conservar valores antes de nuestra funcion:
+f20 -> cr
+f22 -> zi
+f24 -> si
+f26 -> cpi (parms->cp_im)
+f28 -> parms->UL_im
+f30 -> parms->d_im
+Total: 6
 
+Nota: Como el registro impar puede tener info util para la funcion que nos llamo (nosotros no lo usamos, queda "vacio"), en el stack hago lugar para guardar ambos, el par y el impar, usando el sw especial para doubles.
+En cambio, para la lectura, como se que en memoria en verdad son floats, los leo como estan, de a 4 bytes, y uso el lw normal.
+Para la restauracion, uso el lw especial para doubles.
+
+Nota 2:
+En la ABI no se si soy idiota, pero no vi que mencionaran nada de mul.d, s.d, add.s etc, que son las llamadas para doubles y/o floats. Asi que lo saque de aca: https://www.doc.ic.ac.uk/lab/secondyear/spim/node20.html
+No se si esta bien..
