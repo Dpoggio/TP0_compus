@@ -74,14 +74,6 @@ mips32_plot:
 	l.s $f14, 16(t0)			# parms->d_re
 	l.s $f30, 20(t0)			# parms->d_im
 
-
-
-		
-	### Aca podria guardar el header PGM en el buffer...
-	### Para el buffer necesitaria un contador
-	### que me indique cuan lleno esta.
-	### Para el contador se puede usar t0 que ya no se
-	### usa mas.
 	
 #Imprimir Header
 	la a0,header
@@ -222,9 +214,7 @@ load_reg:
 # direcion en el buffer guardada en a1
 
 itoa:					# a0: numero a guardar, a1: direccion de guardado
-    #addu  v0, a1, 8   	# retorna la siguiente direccion
-    #addu  a1, a1, 6		# posiciono sobre el final
-    
+  
     move v0,a1
     la a1,buffer2
     addu a1,a1,30
@@ -243,10 +233,10 @@ loop:
     addu  t3, t3, t0	# se convierte a ascii
     sb   t3, (a1)    	# se almacena en a1
     subu  a1, a1, 1    # dec. buf ptr
-    bne  a0, zero, loop  # if not zero, loop
-    addu a1, a1, 1    # adjust buf ptr
+    bne  a0, zero, loop  # si no es 0, loop
+    addu a1, a1, 1 
 iend:
-    beq  t1, 0, nolz  # was < 0?
+    beq  t1, 0, nolz  # se chequea si el numero es negativo
     subu a1, a1, 1
     li   t0, '-'
     sb   t0, (a1)
@@ -263,7 +253,7 @@ loop2:
 	beq v0,t2,bufferLleno
 retorno:
 	bne a1,t0,loop2
-    j   ra           # of the string
+    j   ra 
 
 bufferLleno:
 	sw a1,A1_STACK($fp)
